@@ -1,0 +1,35 @@
+.r{
+    height:10vh;
+    width:100%;
+    display:
+    border:solid;
+    margin-top: 2%;
+}
+
+#title{
+    height:13vh;
+    width:80vw;
+    display:block;
+    border:solid;
+    font-size:2vmin;
+}
+
+#title h1{
+    font-size:6vmin;
+}
+
+#game-zone{
+    display:block;
+    margin-bottom: 1%;
+}
+
+.tile{
+    background-color:lightgrey;
+    color:black;
+    height: 100%;
+    width: 18%;
+    margin-left: 2%;;
+    border:solid;
+    float: left;
+}
+
