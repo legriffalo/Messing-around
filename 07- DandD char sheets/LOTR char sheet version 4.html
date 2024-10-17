@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>DandD character sheet</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <style> 
+      .invItem{color:red;
+               border-style: solid;
+               font-size:auto;}
+      .translucent{
+          opacity: 0.5;
+      }
+      .area{border-style: solid;
+          padding:2px;
+          overflow-x: hidden;
+          background-color:black;
+          color:aliceblue;
+          font-size:75%;
+          height:auto;
+        }
+      #buttons{
+          position:fixed;
+          width:100%;
+          min-height: 5%;
+          z-index: 3;
+      }
+      .skillsTable tr td input{
+          width: 40px;
+      }
+      #buffer{
+         
+          width: 100%;
+          max-height:450px;
+     
+        }
+      .btn {
+          min-width:10vw;
+          font-size: 100%;}
+      
+      #charInfo .form-control{
+          width: 100%;
+          height:100%;
+      overflow-x: hidden;}
+    /* hidable elements on the sheet will toggle between height auto and height 0 when clicked */
+      .responsive{
+      width: 100%;
+      height: auto;
+      max-height:360px;
+      padding: 2px;}
+      
+      .hidden {
+         display:none;
+      }
+      
+      textarea{
+    width: 100%;
+      }
+      
+      #mods{
+        font-size:100%;
+      }
+      #mods td{width:10%;}
+      #mods td input{width:60px;}
+  </style>
+    
+</head>
+<body id="body" onload='restore()' >
+    
+
+<div id="container" class="container-fluid">
+    
+<!-- div for buttons-->   
+<div id="buttons" class='area row'>   
+    
+ <div id= 'standardButtons' class='col-12'>   
+ 
+<button id='toggleInfo' class="btn-success btn" onclick='hideShow("charInfo"); onOff("toggleInfo");'>Info</button>
+
+
+    
+<button id='toggleStats' class=' btn btn-warning' type="button" onclick="hideShow('baseStatsWrapper'); onOff('toggleStats');">Stats</button>
+
+<button id='toggleSkills' class="btn-light btn" onclick="hideShow('skillsWrapper'); onOff('toggleSkills');">Skills</button>
+    
+    
+<button id = 'toggleStatuses' class="btn-dark btn" onclick="hideShow('statusWrapper'); onOff('toggleStatuses');">Status</button>
+
+<button id='toggleAbilities' class="btn-primary btn" onclick="hideShow('abilities'); onOff('toggleAbilities')">Abilities</button>
+    
+
+     
+<button id='toggleInventory' class="btn-info btn" onclick='hideShow("inventory"); onOff("toggleInventory");'>Inventory</button>
+    
+    
+ <button id='toggleNotes' class="btn-secondary btn" onclick='hideShow("notes"); onOff("toggleNotes");'>Notes</button>   
+    
+<button id ='toggleBackStory' class="btn-secondary btn" onclick="hideShow('backStoryWrapper'); onOff('toggleBackStory');">Backstory</button>
+     
+<button class="btn-danger btn" onclick='hideShow("memoryButtons");'>Save/Load options</button>
+
+</div>
+
+<div id="memoryButtons" class="col-12 hidden responsive">
+    
+<button type="button" class="btn btn-primary" onclick='save()'>Save sheet</button>
+    
+ <button type="button" class="btn btn-danger" onclick='restore()'>revert to save</button>
+    
+ <button class="btn-secondary btn" onclick="wipeData()">Reset data</button>
+    
+</div>
+</div> 
+       
+    
+<div id='buffer' class='area' >
+<div id="buffer2" class='col-12'>
+<img src="https://www.enworld.org/attachments/dd-transparent-png.111290/" class='responsive'>
+    </div> 
+    </div>
+    
+    
+<!-- div to store basic info table-->   
+<div id="charInfo" class='row area'>
+<div class="table-responsive-sm">
+<table id='info' class='table-responsive'>
+    <tr>
+    <td><div class='form-group'>
+<label for="name">Name:</label>
+<textarea rows="1" cols='50' id="name" class="form-control" onblur="updateText('name')" value='name'></textarea></div></td>
+
+<td><div class='form-group'>
+<label for="class">Class:</label>
+<textarea rows="1" cols='20' id="class" class="form-control" onblur="updateText('class')" value='class'></textarea></div></td>
+
+<td><div class='form-group'>
+<label for="Level">Level</label>
+<textarea rows="1" cols='30' id="level" class="form-control" onblur="updateText('level')" value='0'></textarea></div></td>
+    </tr>
+    <tr>
+<td><div class='form-group'>
+<label for="race">Race:</label>
+<textarea rows="1" cols='10' id="race" class="form-control" onblur="updateText('race')" value='race'></textarea></div></td>
+ 
+        <td><div class='form-group'>
+<label for="sex">Sex:</label>
+<textarea rows="1" cols='5' id="sex" class="form-control" onblur="updateText('sex')" value='sex'></textarea></div></td>
+
+    <td><div class='form-group'>
+<label for="alignment">Alignment</label>
+<textarea rows="1" cols='10' id="alignment" class="form-control" onblur="updateText('alignment')" value='name'></textarea></div></td>
+    
+    
+        
+    
+</tr>
+    
+
+<tr>
+    <td><div class='form-group'>
+<label for="size">Size:</label>
+<textarea rows="1" cols='5' id="size" class="form-control" onblur="updateText('size')" value='size'></textarea></div></td>
+    
+<td><div class='form-group'>
+<label for="exhaustion">Exhaustion:</label>
+<textarea rows="1" id="exhaustion" class="form-control" onblur="updateText('exhaustion'); checkExhaustionEffects('exhaustion','statuses');" value='0'></textarea></div></td>
+ 
+    <td><div class='form-group'>
+<label for="shadowScore">Shadow:</label>
+<textarea rows="1" id="shadowScore" class="form-control" onblur="updateText('shadowScore'); misery('shadowScore','shadowWis')" value='0'></textarea></div></td>
+    
+
+    </tr>
+    <tr>
+ 
+<td><div class='form-group'>
+<label for="inspiration">Inspiration:</label>
+<textarea rows="1" cols='3' id="inspiration" class="form-control" onblur="updateText('inspiration')" value='inspiration'></textarea></div></td>
+            
+        
+        
+<td><div class='form-group'>
+<label for="totalHP">totalHP:</label>
+<textarea rows="1" cols='3' id="totalHP" class="form-control" onblur="updateText('totalHP')" value='totalHP'></textarea></div></td>
+    
+
+
+    
+<td><div class='form-group'>
+<label for="currentHP">currentHP:</label>
+<textarea rows="1" cols='3' id="currentHP" class="form-control" onblur="updateText('currentHP')" value='size'></textarea></div></td>
+    
+</tr>
+ 
+</table>
+
+<table id="mods2" class="table-dark table-bordered table-responsive">
+     <tr>
+<td><div><p>Modifiers</p></div></td>
+    <td><div><p>Str</p></div></td>
+<td><div><p>Int</p></div></td>
+<td><div><p>Dex</p></div></td>
+<td><div><p>Wis</p></div></td>
+<td><div><p>Con</p></div></td>
+<td><div><p>Char</p></div></td>
+<td><div><p>AC</p></div></td>
+<td><div><p>Speed</p></div></td>
+<td><div><p>Proficiency</p></div></td>
+    
+
+</tr>
+<tr>
+<td><div><p>Value</p></div></td>
+    <td><div><p class='istr'>0</p></div></td>
+<td><div><p class='iint'>0</p></div></td>
+<td><div><p class='idex'>0</p></div></td>
+<td><div><p class='iwis'>0</p></div></td>
+<td><div><p class='icon'>0</p></div></td>
+<td><div><p class='ichar'>0</p></div></td>
+<td><div><p id='iAC'>0</p></div></td>
+<td><div><p id='ispeed'>0</p></div></td>
+<td><div><p id ='iproficiency'>0</p></div></td>
+
+
+</tr>  
+</table>
+</div>
+</div> 
+    
+    
+    
+
+    
+    
+<!-- div to store and manage base stats and modifiers -->
+<div id='baseStatsWrapper' class='row area'>
+<div id="baseStats" class="table-responsive-sm">
+<div class="table-responsive">
+<table class="table-sm table-bordered table-dark table">
+<!-- base stats row-->
+<tr><td>Base stat</td><td><div class="form-group">
+  <label for="strength">Strength:</label>
+  <input type="number" class=" str form-control" id="strength" value="8" onblur="updateField('strength');totals('str');">
+</div></td>
+<td><div class="form-group">
+  <label for="intelligence">intelligence:</label>
+  <input type="number" class=" int form-control" id="intelligence" value="8" onblur="updateField('intelligence');totals('int');">
+</div></td>
+<td><div class="form-group">
+  <label for="dexterity">Dexterity:</label>
+  <input type="number" class="dex form-control" id="dexterity" value="8" onblur="updateField('dexterity');totals('dex');">
+</div></td>
+<td><div class="form-group">
+  <label for="wisdom">Wisdom:</label>
+  <input type="number" class=" wis form-control" id="wisdom" value="8" onblur="updateField('wisdom');totals('wis')">
+</div></td>
+<td><div class="form-group">
+  <label for="constitution">Constitution:</label>
+  <input type="number" class=" con form-control" id="constitution" value="8" onblur="updateField('constitution');totals('con');">
+</div></td>
+<td><div class="form-group">
+  <label for="charisma">Charisma:</label>
+  <input type="number" class="char form-control" id="charisma" value="8" onblur="updateField('charisma');totals('char');">
+</div></td>
+<td><div class="form-group">
+  <label for="AC">AC:</label>
+  <input type="number" class="ac form-control" id="AC" value="0" onblur="updateField('AC');totals('ac');">
+</div></td></tr> 
+<!-- bonuses row-->
+<tr><td>bonuses</td>
+    <td><div class="form-group">
+  <label for="bonusStr">bonuses:</label>
+    <input type="number" class=" str form-control" id="bonusStr" value="0" onblur="updateField('bonusStr');totals('str');"></div></td>
+    
+    <td><div class="form-group">
+  <label for="bonusInt">bonuses:</label>
+    <input type="number" class="int form-control" id="bonusInt" value="0" onblur="updateField('bonusInt');totals('int');"></div></td>
+    
+    <td><div class="form-group">
+  <label for="bonusDex">bonuses:</label>
+    <input type="number" class="dex form-control" id="bonusDex" value="0" onblur="updateField('bonusDex');totals('dex')"></div></td>
+    
+    <td><div class="form-group">
+  <label for="bonusWis">bonuses:</label>
+    <input type="number" class="wis form-control" id="bonusWis" value="0" onblur="updateField('bonusWis');totals('wis')"></div></td>
+    
+    <td><div class="form-group">
+  <label for="bonusCon">bonuses:</label>
+    <input type="number" class="con form-control" id="bonusCon" value="0" onblur="updateField('bonusCon');totals('con')"></div></td>
+    
+    <td><div class="form-group">
+  <label for="bonusChar">bonuses:</label>
+    <input type="number" class="char form-control" id="bonusChar" value="0" onblur="updateField('bonusChar');totals('char')"></div></td>
+    
+    <td><div class="form-group">
+  <label for="bonusAC">bonuses:</label>
+    <input type="number" class="ac form-control" id="bonusAC" value="0" onblur="updateField('bonusAC');totals('ac');"></div></td>
+    </tr>      
+<!-- totals row -->   
+<tr>
+<td><div><p>Totals</p></div></td>
+<td><div><p class='str'>Strength</p></div></td>
+<td><div><p class='int' >Intelligence</p></div></td>
+<td><div><p class='dex'>Dexterity</p></div></td>
+<td><div><p id ='shadowWis' class='wis'>Wisdom</p></div></td>
+<td><div><p class='con'>Constitution</p></div></td>
+<td><div><p class='char'>Charisma</p></div></td>
+<td><div><p class='ac'>AC</p></div></td>
+</tr>
+</table>
+</div> 
+</div>
+<!-- div for modifiers-->
+<div id='modWrapper' class='table-responsive'>
+<table id="mods" class="table-dark table-bordered">
+     <tr>
+<td><div><p>Modifiers</p></div></td>
+    <td><div><p>Str</p></div></td>
+<td><div><p>Int</p></div></td>
+<td><div><p>Dex</p></div></td>
+<td><div><p>Wis</p></div></td>
+<td><div><p>Con</p></div></td>
+<td><div><p>Char</p></div></td>
+<td><div><p>AC</p></div></td>
+<td><div><p>Speed</p></div></td>
+<td><div><p>Proficiency</p></div></td>
+    
+
+</tr>
+<tr>
+<td><div><p>Value</p></div></td>
+    <td><div><p id="valueSTR" class='str'>0</p></div></td>
+<td><div><p id="valueINT" class='int'>0</p></div></td>
+<td><div><p id="valueDEX" class='dex'>0</p></div></td>
+<td><div><p id="valueWIS" class='wis'>0</p></div></td>
+<td><div><p id="valueCON" class='con'>0</p></div></td>
+<td><div><p id="valueCHAR" class='char'>0</p></div></td>
+<td><div><p  id='ACshow'>0</p></div></td>
+<td><div><input type="number" class="form-control" id="speed" value="0" onblur="updateField('speed'); updateDatum('speed','ispeed')" ></div></td>
+<td><div><input type="number" class="form-control" id="proficiency" value="0" onblur="updateField('proficiency'); updateDatum('proficiency','iproficiency')"></div></td>
+
+
+</tr>  
+</table>
+</div>
+</div>
+    
+    
+<!-- div for skill tables-->
+<div id='skillsWrapper' class='row'>
+<!-- skill table 1-->
+<div id='skills1' class="col area">
+<div class='table-responsive'>
+<table onchange="skillsTableMods('skillsTable1');" id='skillsTable1' class='skillsTable table-bordered table-dark' >
+
+<tr><th>skill</th><th>basemod</th><th>points</th><th>total mod</th></tr>
+    
+<tr><td>acrobatics(dex)</td><td class="DEX">0</td><td><input id="acrobatics" onblur="updateField('acrobatics');skillsTotalMods('skillsTable1');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+
+<tr><td>animal handling(wis)</td><td class="WIS">0</td><td><input id="animal" onblur="updateField('animal');skillsTotalMods('skillsTable1');" type="number" value='0'></td><td id="totalAni">0</td></tr>
+    
+<tr><td>arcana(Int)</td><td class="INT">0</td><td><input id="arcana" onblur="updateField('arcana');skillsTotalMods('skillsTable1');"type="number" value='0'></td><td id="totalAcr">0</td></tr>
+
+<tr><td>athletics(str)</td><td class="STR">0</td><td><input id="athletics" onblur="updateField('athletics');skillsTotalMods('skillsTable1');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+    
+<tr><td>deception(char)</td><td class="CHAR">0</td><td><input id="deception" onblur="updateField('deception');skillsTotalMods('skillsTable1');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+    
+<tr><td>history(int)</td><td class="INT">0</td><td><input id="history" onblur="updateField('history');skillsTotalMods('skillsTable1');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+    
+<tr><td>insight(wis)</td><td class="DEX">0</td><td><input id="insight" onblur="updateField('insight');skillsTotalMods('skillsTable1');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+    
+<tr><td>intimidation(char)</td><td class="CHAR">0</td><td><input id="intimidation" onblur="updateField('intimidation');skillsTotalMods('skillsTable1');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+
+<tr><td>intimidation(str)</td><td class="STR">0</td><td><input id="intimidations" onblur="updateField('intimidations');skillsTotalMods('skillsTable1');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+
+<tr><td>investigation(int)</td><td class="INT">0</td><td><input id="investigation" onblur="updateField('investigation');skillsTotalMods('skillsTable1');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+    
+</table>
+</div>
+</div>
+<!-- skill table 2 -->
+<div id='skills2' class="col area">
+<div class='table-responsive'>
+<table onchange="skillsTableMods('skillsTable2);" id='skillsTable2' class='skillsTable table-bordered table-dark'>
+<tr><th>skill</th><th>base mod</th><th>points</th><th>total mod </th></tr>
+    
+<tr><td>Medicine(wis)</td><td class="WIS">0</td><td><input id="medicine" onblur="updateField('medicine');skillsTotalMods('skillsTable2');" type="number" value='0' ></td><td id="totalAcr">0</td></tr>
+
+<tr><td>Nature(int)</td><td class="INT">0</td><td><input id="nature" onblur="updateField('nature');skillsTotalMods('skillsTable2');" type="number" value='0'></td><td id="totalAni">0</td></tr>
+    
+<tr><td>Perception(wis)</td><td class="WIS">0</td><td><input id="perception" onblur="updateField('perception');skillsTotalMods('skillsTable2');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+
+<tr><td>Performance(char)</td><td class="CHAR">0</td><td><input id="performance" onblur="updateField('performance');skillsTotalMods('skillsTable2');" type="number" value='0'></td><td id="totalAcr">0</td></tr>
+    
+<tr><td>Persuasion(char)</td><td class="CHAR">0</td><td><input id="persuasion" onblur="updateField('persuasion');skillsTotalMods('skillsTable2');" type="number" value='0'></td><td id="totalPer">0</td></tr>
+        
+<tr><td>Piety(wis))</td><td class="WIS">0</td><td><input id="pietyw" onblur="updateField('pietyw');skillsTotalMods('skillsTable2');" type="number" value='0'></td><td id="totalPiew">0</td></tr>
+
+<tr><td>sleight of hand(dex)</td><td class="DEX">0</td><td><input id="slehan" onblur="updateField('slehan');skillsTotalMods('skillsTable2');" type="number" value='0'></td><td id="totalSle">0</td></tr>
+
+<tr><td>stealth(dex)</td><td class="DEX">0</td><td><input id="stealth" onblur="updateField('stealth');skillsTotalMods('skillsTable2');" type="number" value='0'></td><td id="totalSte">0</td></tr>
+
+<tr><td>survival(wis)</td><td class="WIS">0</td><td><input id="survival" onblur="updateField('survival');skillsTotalMods('skillsTable2');" type="number" value='0'></td><td id="totalSur">0</td></tr>
+
+</table>
+</div>
+</div>   
+</div>    
+    
+    
+    
+<!-- area for status effects-->     
+
+   
+<div id="statusWrapper" class='row area'>
+
+    
+<div id="shadow" class="col area">
+    <label for="shadow">shadow flaws:</label>
+<textarea id='newShadowFlaw' placeholder="create a new shadow flaw"></textarea>
+<button id="newShadowFlaw" onclick="addNewShadowFlaw('flaws')">Add flaw </button>
+    
+    <div id="flaws">
+    <div id='miserable'><p class='text-danger'>you are miserable shadow madness will insue</p></div>
+    
+    </div> 
+    </div>
+ 
+    
+<div id="effects" class="col area">
+<label for="exhaustion">Status effects:</label>
+   <textarea id='newStatus' placeholder="create a new status"></textarea>
+<button id="newStatus" onclick="addNewStatus('statuses2')">Add status </button>
+   <div id='statuses'></div> 
+   <div id='statuses2'></div> 
+</div> 
+
+
+</div>
+
+    
+ <!-- area to deal with abilities and spells-->
+    
+<div id="abilities" class='row area'>
+ <div id="abilities/spells" class="col-12 area">
+<label for="abilities/spells">Abilities/spells</label>
+<textarea id='newAbility' placeholder="create a new ability"></textarea>
+<button id="newAbility" onclick="addNewAbility('completedAbilities')">Add Ability </button>
+<div id='completedAbilities'>
+    
+</div>
+</div>     
+    
+</div>
+    
+<!-- area for inventory abilities and notes-->    
+<div id="inventorybackgroundandnotes" class="row area">
+    
+<div id="inventory" class="col-12 area">
+<label for="inventory">Inventory</label>
+<textarea id='newItem'  placeholder="create a new item here"></textarea>
+<button id="inventorybtn2" onclick="addNewItem('completedItems')">Add completed item </button>
+<div id='completedItems'>
+
+</div>
+</div>
+    </div>
+    
+    <!-- area for notes-->
+ <div id="notes" class="row area">   
+<div id="notes" class="col-12 area">
+<label for="notes">Notes</label>
+<textarea id='newNote' placeholder="create a new note"></textarea>
+<button id="newNote" onclick="addNewNote('completedNotes')">Add note</button>
+<div id='completedNotes'>
+    
+</div>
+</div>
+
+
+</div>  
+    
+<!-- div to store backstory paragrapeh-->
+<div id='backStoryWrapper'>   
+<div id="backStory" class="row area">
+<label for="backStory">backstory</label>
+<textarea rows="10" id="charBackStory" class="form-control" onblur="updateText('charBackStory')"></textarea>
+<p class='text-danger'>all character sheet information is temporarily stored, <strong>press the save button to make changes permanent.</strong> </p>
+</div>
+</div>
+        
+
+    
+</div>
+
+
+
+<script>
+
+var j =0;
+var k =0;  
+var l = 0;
+var m = 0;
+var n=0;
+//updates values in the skills tables
+function skillsTotalMods(x){
+   var fields = document.getElementById(x).getElementsByTagName('tr');
+   //window.alert(fields[1][0]);  
+   for(i=1;i<fields.length;i++){
+       var values = fields[i].getElementsByTagName('td');
+       var points = values[2].getElementsByTagName('*')[0].value;
+       //window.alert(points);
+       values[3].innerHTML = parseInt(values[1].innerHTML)+ parseInt(points);
+   }
+}
+    
+    
+    
+//updates skills mod base mods   value
+function skillsTableMods(x){
+    
+var fields = document.getElementById(x).getElementsByTagName('td');
+//window.alert(fields.length);
+    
+var checks = ['STR','INT','DEX','WIS','CHAR','CON']    
+
+for (j=0;j<6;j++)
+{
+   var baseBeingChecked = checks[j];
+    //window.alert(baseBeingChecked);
+    
+    for(i=0;i<fields.length;i++){
+       
+    if(fields[i].className==baseBeingChecked)
+    {fields[i].innerHTML = document.getElementById('value'+ baseBeingChecked).innerHTML;}
+    else{}
+}}
+}
+
+    function misery(x,y){
+        var a = document.getElementById(x).value;
+        var b = parseInt(document.getElementById(y).innerHTML);
+        window.alert(a);
+        window.alert(b);
+        if(b<a){
+            document.getElementById('miserable').style.display='block';
+        }
+        else{document.getElementById('miserable').style.display='none';
+            }
+    }
+    
+function checkExhaustionEffects(x,y){
+    document.getElementById(y).innerHTML='';
+   var value =  parseInt(document.getElementById(x).innerHTML);
+    
+      if(value>0){
+    document.getElementById(y).innerHTML += "<p class='text-warning'>You have disadvantage on all skill checks EX1</p>"  
+    }
+    else{}
+    if(value>1){
+       document.getElementById(y).innerHTML += "<p class='text-warning'>Your speed is halved EX2</p>"}
+    else{}
+    
+    if(value>2){
+       document.getElementById(y).innerHTML += "<p class='text-warning'>You have disadvantage on attacks EX3</p>"}
+    else{}
+    if(value>3){
+       document.getElementById(y).innerHTML += "<p class='text-warning'>Your hp max is halved EX4</p>"}
+    else{}
+    
+     if(value>4){
+       document.getElementById(y).innerHTML += "<p class='text-warning'>Speed is 0 EX5</p>"}
+    else{}
+    
+    if(value>5){
+     document.getElementById(y).innerHTML += "<p class='text-warning'>You DIED EX6</p>"   
+    }
+    else{}
+     
+//window.alert(y);
+    
+    
+
+}
+        
+// hides and shows areas of the char sheet
+function hideShow(x){
+var element = document.getElementById(x);
+    element.classList.toggle("hidden");
+    window.location = '#'+x;
+    window.scrollTo(window.scrollX, window.scrollY - 100);
+}
+
+//toggle button activation status
+    
+function onOff(x){
+    var element = document.getElementById(x);
+    element.classList.toggle('translucent');
+
+}
+    
+// updates value attr for text area to allow save to work
+function updateText(x){
+    var text = document.getElementById(x).value;
+    document.getElementById(x).innerHTML = text;
+    //window.alert(text);
+}
+    
+function updateField(x){
+    var field = document.getElementById(x);
+    var value = document.getElementById(x).value;
+    //window.alert(value);
+    
+    field.setAttribute("value",value);
+    
+}
+function updateDatum(x,y){
+    var datum =document.getElementById(x).value;
+    document.getElementById(y).innerHTML= datum;
+}
+    
+//updates base stat totals and base mods values
+function totals(x){
+    var value1 = document.getElementsByClassName(x)[0].value;
+    var value2 = document.getElementsByClassName(x)[1].value;
+    var total = parseInt(value1)+parseInt(value2);
+    //window.alert(total);
+    
+    document.getElementsByClassName(x)[2].innerHTML= total;
+    
+    var bob = document.getElementsByClassName(x).length;
+    //window.alert(bob);
+   if(bob!=4){
+       document.getElementById('ACshow').innerHTML=total;
+       document.getElementById('iAC').innerHTML=total.toString();
+   }
+    else{
+     document.getElementsByClassName(x)[3].innerHTML = Math.floor((total-10)/2);  
+    var z = 'i'+x;
+     document.getElementsByClassName(z)[0].innerHTML = Math.floor((total-10)/2);   
+        
+    }
+    
+skillsTableMods('skillsTable1');
+skillsTableMods('skillsTable2');
+skillsTotalMods('skillsTable1');
+skillsTotalMods('skillsTable2');
+} 
+  
+    
+    
+    
+    
+    
+    
+//saves all instantly accessable HTML elements in the body
+function save(){
+//check browser is compatible
+    if (typeof(Storage) !== "undefined") {
+  window.alert("This browser is suitable to store data"); 
+} else {
+  window.alert('you will have to save content by screenshot...sorryalternatively change your browser to chrome opera or safari');
+}
+    var body = document.getElementsByTagName("body");
+    var bodycontent = body[0];
+    
+    var saveState=bodycontent.innerHTML;
+localStorage.setItem("lastsave1", saveState);
+}
+    
+// restore previously saved version
+function restore(){
+    var lastSave = localStorage.getItem("lastsave1");
+    
+    if (lastSave!=null){
+    document.getElementById("body").innerHTML = localStorage.getItem("lastsave1");}
+    else{
+        window.alert('there is no data to access');
+    }
+   
+}
+    
+//create a new character note
+function addNewNote(x){
+  var itemNumber = k;
+  var itemId = "note " + k.toString();
+  var itemDescription = document.getElementById('newNote').value;
+  //window.alert(itemDescription);
+  document.getElementById(x).innerHTML += "<div class='invItem' id='" + itemId + "'><p>" + itemDescription + "</p><button onclick='removeitem("+'"'+itemId+'"'+")'>delete</button></div>";
+  //window.alert(itemId);
+  k++;
+  
+} 
+    
+//add new ability
+    
+function addNewAbility(x){
+  var itemNumber = l;
+  var itemId = "abilty " + l.toString();
+  var itemDescription = document.getElementById('newAbility').value;
+  //window.alert(itemDescription);
+  document.getElementById(x).innerHTML += "<div class='invItem' id='" + itemId + "'><p>" + itemDescription + "</p><button onclick='removeitem("+'"'+itemId+'"'+")'>delete</button></div>";
+ // window.alert(itemId);
+  l++;
+  
+} 
+    
+//add new status
+    
+function addNewStatus(x){
+  var itemNumber = n;
+  var itemId = "status " + n.toString();
+  var itemDescription = document.getElementById('newStatus').value;
+  //window.alert(itemDescription);
+  document.getElementById(x).innerHTML += "<div class='invItem' id='" + itemId + "'><p>" + itemDescription + "</p><button onclick='removeitem("+'"'+itemId+'"'+")'>delete</button></div>";
+ // window.alert(itemId);
+  n++;
+  
+}
+    
+function addNewShadowFlaw(x){
+  var flawNumber = m;
+  var flawId = "shadowFlaw " + m.toString();
+  var flawDescription = document.getElementById('newShadowFlaw').value;
+  window.alert(flawDescription);
+  document.getElementById(x).innerHTML += "<div class='invItem' id='" + flawId + "'><p>" + flawDescription + "</p><button onclick='removeitem("+'"'+flawId+'"'+")'>delete</button></div>";
+ window.alert(flawId);
+  m++;
+  
+}
+    
+//create a new item
+function addNewItem(x){
+  var itemNumber = j;
+  var itemId = "item " + j.toString();
+  var itemDescription = document.getElementById('newItem').value;
+  //window.alert(itemDescription);
+  document.getElementById(x).innerHTML += "<div class='invItem' id='" + itemId + "'><p>" + itemDescription + "</p><button onclick='removeitem("+'"'+itemId+'"'+")'>delete</button></div>";
+  //window.alert(itemId);
+  j++;
+  
+}
+    
+function wipeData(){
+    if(confirm('are you sure you want to clear all saved data')){localStorage.removeItem("lastsave1");
+}
+    else{}}
+    
+//remove a note/item from the inventory/story notes   
+function removeitem(x){
+   var elem = document.getElementById(x);
+    elem.remove();
+}
+  
+    </script>
+</body>
+</html>

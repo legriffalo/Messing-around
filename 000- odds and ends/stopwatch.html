@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Timer app</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- bootstrap 4 styles -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<!-- icons -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    
+  <style>
+      #alltimers{
+         height: 80vh;
+      }
+      #timer{
+          background-color: black;
+          color:white;
+          font-size: 10vw;
+          text-align: center;
+          vertical-align: middle;
+      }
+  #laps{
+          height: 80%;
+          overflow-y: scroll;
+       
+      }
+      
+      .lap{
+          background-color:black;
+          color:red;
+          
+      }        
+          
+      
+      body{
+          background-image: url("")
+      }
+      
+   
+  </style>
+    
+</head>
+    
+<body>
+
+
+<div class="container-fluid">
+<button class="btn btn-primary" onclick="startTimer()">START</button>
+<button id='pause' onclick="pauseResetTimer()" class="btn btn-danger">PAUSE</button>
+    <button class="btn btn-warning" onclick="lap()">LAP</button>
+
+
+    
+
+<div id="alltimers" class='row'>
+   <div id="timer" class='col-9'>
+    <span class="hours">00</span><span>:</span>
+    <span class="minutes">00</span><span>:</span>
+    <span class="seconds">00</span><span>:</span>
+       <span class="hundredths">00</span>
+    </div>
+<div id='laps' class=col-3>
+    
+    
+</div>
+</div>
+
+    
+<!-- footer-->
+<div class="footer" id="footer">
+<p> &copy Made with the assistance of logomakr</p> 
+
+</div>   
+
+</div>
+
+    
+<script>
+   
+var status= "ready";
+var timer = ""; 
+var time = 0;
+var i =1;  
+    
+//function pauses the timer by clearing the timer interval and changes the pause button to a reset button.
+function pauseResetTimer(){
+    if(status=="running"){
+       clearInterval(timer);
+        status="paused";
+      document.getElementById('pause').innerHTML="RESET"
+        //window.alert(status);
+    }
+else if(status=="paused"){
+       resetTimer(); 
+       status = "ready";
+    document.getElementById('pause').innerHTML="PAUSE"
+       //window.alert(status);
+    }
+    else {//window.alert(status);
+    }
+    
+    
+
+}
+
+//resets the time, updates display to zeros, changes pause button back to pause.
+function resetTimer(){
+    time=0;
+    updateDisplay("timer",0,0,0,0);
+    document.getElementById('laps').innerHTML="";
+}
+    
+function lap(){
+    var hundredths = time%100;
+    var seconds = Math.floor((time/100)%60);
+    var minutes = Math.floor((time/6000)%60);
+    var hours = Math.floor((time/360000));
+    //window.alert(hours + ":" + minutes + ":" + seconds +":"+hundredths);
+    var lapName = "lap" + i.toString();
+    document.getElementById('laps').innerHTML += '<div class = "lap" id="'+lapName+'"> LAP ' + i + '  <span class="hours">00</span><span>:</span><span class="minutes">00</span><span>:</span><span class="seconds">00</span><span>:</span><span class="hundredths">00</span>        </div>'
+    updateDisplay(lapName,hours,minutes,seconds,hundredths);
+    i++;
+    
+}
+    
+    
+function startTimer(){
+       //window.alert(status);
+   if(status!='running'){
+   document.getElementById('pause').innerHTML = 'PAUSE';
+   status = 'running';
+   
+timer = setInterval(function(){
+    time++;
+    var hundredths = time%100;
+    var seconds = Math.floor((time/100)%60);
+    var minutes = Math.floor((time/6000)%60);
+    var hours = Math.floor((time/360000));
+    
+    updateDisplay("timer",hours,minutes,seconds,hundredths);
+},10); }   
+
+    else{}
+    
+    
+}    
+    
+    
+    
+function updateDisplay(w,x,y,z,a){
+    
+    var xFormatted = ("00"+x.toString()).slice(-2);
+    var yFormatted = ("00"+y.toString()).slice(-2);
+    var zFormatted = ("00"+z.toString()).slice(-2);
+    var aFormatted = ("00"+a.toString()).slice(-2);
+     
+   var face = document.getElementById(w); 
+    
+face.querySelector(".hours").innerHTML = xFormatted;
+   face.querySelector(".minutes").innerHTML = yFormatted;
+   face.querySelector(".seconds").innerHTML = zFormatted;
+   face.querySelector(".hundredths").innerHTML = aFormatted;
+   } 
+
+  
+</script>
+</body>
+</html>

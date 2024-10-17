@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title> BOPIT </title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+<link rel="stylesheet" href="styling.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>   
+
+</head>
+
+<body>
+    
+<audio id="starttune" volume="0.6"><source src="SFX/starttune.mp3"></audio>  
+  
+<audio id="flick" volume="0.8"><source src="SFX/Flick_C.wav"></audio>
+<audio id="pull" volume="0.8"><source src="SFX/Pull_C.wav"></audio>
+<audio id="spin" volume="0.8"><source src="SFX/Spin_C.wav"></audio>
+<audio id="twist" volume="0.8"><source src="SFX/Twist_C.wav"></audio>
+<audio id="bop" volume="0.8"><source src="SFX/Bop_C.wav"></audio>
+<audio id="backing" volume="0.6"><source src="SFX/backing1.mp3"></audio>  
+<audio id="ready" volume="0.6"><source  src="SFX/ready.mp3"></audio>
+<audio id="BPM" volume="0.7"><source  src="SFX/BPM.mp3"></audio>
+    
+<div id="audiofiles">  
+</div>  
+    
+<div id="testaudio">
+</div>
+    
+    
+<div id="container">
+    
+<div id="portraits"><img id='portrait' src='instructionset1/portrait.png' > </div>
+    
+    
+    <div id="scorebox">
+    score: <span id = "scorevalue">0</span> </div>
+  <div id="livesremaining"> </div>  
+    
+    
+   
+    
+    <div id="bopzone">
+    
+    <img id="bop-it" src="bop-itmain.png" class="bop" usemap="#bop-it">
+
+<map name="bop-it">
+  <area shape="rect" coords="50,20,100,126" onclick="userinput('flick')" >
+  <area shape="rect" coords="190,5,255,80" onclick="userinput('twist')" >
+  <area shape="circle" coords="150,160,50" onclick="userinput('bop')">
+ <area shape="rect" coords="30,240,100,300" onclick="userinput('spin')">
+     <area shape="rect" coords=",200,240,260,290" onclick="userinput('pull')">
+</map>
+    </div>
+     <div id="instruction"> click any where to get the party started!!!</div>
+    
+  
+    
+<div id="startreset" onclick="startreset()"> start/reset </div>
+    
+
+<div id="gameover1"> 
+    <p> Game over</p>
+    <p>Your score is <span id="gamescore"></span></p></div>
+    
+    
+    
+</div>
+    
+   
+<script src = "jquery.js" language="Javascript" type="text/javascript">
+  //leaving script till last makes sure objects are loaded before js is executed. 
+    
+</script>
+    
+</body>

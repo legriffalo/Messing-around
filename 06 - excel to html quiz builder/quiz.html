@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  
+  <script src="./quiz_dependencies/MathJax-2.7.3/MathJax.js">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"]]}
+    });
+  </script>
+    
+<title> Multiplication game </title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+<link rel="stylesheet" href="./quiz_dependencies/styling.css">
+
+</head>
+
+<body>
+  
+<div id="container">
+    <div id="scorebox">
+    score: <span id = "scorevalue">0</span> </div>
+    
+    <div id="correct"> Correct!</div>
+    <div id="wrong"> Try again</div>
+    
+   
+    
+    <div id="question"> click start</div>
+     <div id="instruction"> Click the correct answer</div>
+    
+    <div id="choices">
+    
+    </div>
+    
+<div id="startreset" onclick="startQuiz()"> start/reset </div>
+    
+<!--<div id="timeremaining"> Time:<span id="timeRemaining"></span> </div>-->
+<div id="quizover"> 
+    <p> Well done </p>
+    <p>Your score is <span id="quizscore"></span>/<span id = 'outof'></span></p></div>
+    
+    
+    
+</div>
+    
+  
+<!--<script src="javascript2.js"></script>-->
+
+<script type="text/javascript" src="./quiz2.js"></script>
+
+<script src ="./quiz_dependencies/quiz.js"></script>
+
+<script type="text/javascript">
+  function updateMathContent() {
+      var math = MathJax.Hub.getAllJax("container");
+      print(math)
+      for(let i = 0; i<math.length;i++){
+        var eq = math[i]
+      MathJax.Hub.Queue(["Text", eq, ]);
+  }}
+</script>
+
+ 
+</body>

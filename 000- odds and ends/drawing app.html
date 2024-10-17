@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Drawing app</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- bootstrap 4 styles -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<!--jquery ui for sliders-->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">  
+<!-- icons -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<!--jquery CDN-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<!--jquery UI-->
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>  
+  <style>
+      body {
+          background:url("http://artisticpov.jessemaccabe.com/wp-content/uploads/2013/10/brushStrokes_002.jpg");
+     
+        background-size: 100%;
+      }
+      
+      #header{
+       margin:0 auto;
+        background-color:aqua;
+          color:black;
+          width: 20vw;
+          text-align: center;
+      }
+      #paint{
+          
+          background-color:#fff;
+          /*border-style: dashed;
+          border-color: black;*/
+          cursor:crosshair;
+      }
+          
+     .mode_on{
+             background-color: red;
+             color:white;
+          }    
+          
+          
+
+      
+      
+      #container{ 
+          border: 1px solid black;
+          margin:10px auto;
+          width: 450px;
+          height:450px;
+          /*change width and height to be dynamic later*/
+      }
+      #inputs div{
+          margin-bottom: 10px;
+      }
+      #inputs{
+        margin:0 auto;
+        height:10vh;
+          width: 50vw;
+         
+          
+      }
+      
+  </style>
+    
+</head>
+    
+<body>
+<!-- header for app-->
+<div id="header">Drawing app </div>
+ 
+<!--div for inputs -->   
+<div id="inputs">
+  <div id="color">
+<input id ='color_choice' type="color"></div>  
+<div id="size"></div> 
+    <div id="slider"></div>
+</div>
+
+<div id = 'container'>
+<!-- paint area -->
+<canvas id="paint">
+</canvas>
+</div> 
+    
+<div id = 'buttons'><button id= 'erase'>erase</button><button id= 'draw'>draw</button>
+<button id = 'save'>save</button>
+<button id= 'load'>load</button></div>
+
+
+    
+<script>
+//$(document).ready(function(){
+    
+    $("#slider").slider({
+        slide: function(event, ui){
+            context.lineWidth = (ui.value);
+        }, min: 0, max: 100
+    });   
+ 
+       
+    
+</script>
+    
+<script>
+    
+ var canvas_width = document.getElementById('container').offsetWidth;   
+    
+var canvas_height = document.getElementById('container').offsetHeight; 
+//window.alert(canvas_width);
+var color = document.getElementById('color_choice');
+var color_picked = 'black';   
+color.addEventListener('input',function(e){
+    color_picked = color.value;
+})
+ 
+//var slider = document.getElementById('slider')
+//slider.addEventListener('input',function(e){
+ //   context.lineWidth = this.value;
+//})
+    
+
+//painting/erasing
+var paint = false;
+//painting or erasing
+var paint_or_erase = 'painting';
+// get canvas and context
+var canvas = document.getElementById('paint');
+canvas.height = canvas_height;
+canvas.width = canvas_width;
+var context = canvas.getContext('2d');
+context.stroke();
+//get canvas container
+var container = document.getElementById('container');
+// mouse position
+var mouse = {x: 0,y: 0};   
+//onload get local storage
+function loadPrevious(){};
+//set drawing parameters
+context.lineWidth = 3;
+context.lineCap = 'round';
+context.lineJoin = 'round';
+container.addEventListener('mousedown',function(e){
+    paint = true;
+    context.beginPath();
+    mouse.x = e.pageX - this.offsetLeft;
+    mouse.y = e.pageY - this.offsetTop;
+    //console.log(mouse.x,mouse.y);
+    context.moveTo(mouse.x,mouse.y);
+})
+    
+    
+/// buttons to togeel erase and paint
+var draw_button = document.getElementById('draw')
+draw_button.classList.add('mode_on');
+var erase_button = document.getElementById('erase');
+var save_button = document.getElementById('save');
+var load_button = document.getElementById('load');
+    
+erase_button.addEventListener('click',function(e){
+  //window.alert('hi');
+    paint_or_erase = 'erasing';
+    this.classList.add('mode_on');
+    draw_button.classList.remove('mode_on');
+})
+    
+draw_button.addEventListener('click',function(e){
+  //window.alert('hello');
+  paint_or_erase = 'painting';
+  this.classList.add('mode_on');
+  erase_button.classList.remove('mode_on');
+})
+    
+save_button.addEventListener('click',function(e){
+     //var saveState = canvas.innerHTML;
+localStorage.setItem("lastsave1", canvas.toDataURL());
+//window.alert(canvas.toDataURL())
+})
+    
+load_button.addEventListener('click',function(e){
+    
+    if (localStorage.getItem('lastsave1')!= null){
+        
+        clear_all()
+        var img = new Image();
+        img.onload = function(){
+            context.drawImage(img,0,0);
+        }
+        img.src = localStorage.getItem('lastsave1');
+        
+        
+    }
+});
+
+erase_button.addEventListener('dblclick',function(){clear_all()})
+    
+function clear_all(){
+    context.clearRect(0,0,canvas.width,canvas.height);
+    paint_or_erase = 'painting';
+    erase_button.classList.remove('mode_on')
+    draw_button.classList.add('mode_on');
+}
+    
+container.addEventListener('mousemove',function(e){
+    mouse.x = e.pageX - this.offsetLeft;
+    mouse.y = e.pageY - this.offsetTop;
+    if(paint == true){
+        
+        if(paint_or_erase == 'painting')
+        {
+        context.strokeStyle = color_picked;    
+        }
+        
+        else{ 
+            context.strokeStyle = 'white';
+        }
+        
+    context.lineTo(mouse.x,mouse.y);
+    context.stroke();
+    }
+});
+    
+container.addEventListener('mouseup',function(e){
+    paint = false;
+})
+function setParameters(){}
+//click in container - set paint erase
+function editing(){};
+// if mouse held draw
+function draw(){};
+// on mouse up stop painting - set paint erase
+
+//outside container no painting
+//reset button 
+// save button
+// erase button
+// changing colour
+//changing linewidth
+//
+    
+    
+    
+</script>
+</body>
+</html>
