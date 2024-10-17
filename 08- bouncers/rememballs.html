@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Rememballs_To do list</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- bootstrap 4 styles -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<style>   
+
+.bounce_zone{
+    background:grey;
+	width:400px;
+	height: 400px;
+	position:relative;
+}
+
+.ball{
+    background:red;
+	position:absolute;
+	top:0;
+	left:0;
+	width:50px;
+	height:50px;
+	border-radius:30px;
+}
+
+</style>    
+</head>
+
+<!--Start of th body section-->
+<body>
+<div class = "container">
+<div class = "topper"></div>
+    <!-- div for input box-->
+<div class = "input">
+    <input class = "task" placeholder="enter some text"></input>
+    <input class = "date" type = "date" placeholder="01/01/2000"></input> 
+</div>
+<!-- div display area-->
+<div class = "display">
+
+</div>
+
+<!--div bounce zone-->
+<div id = "bounce_zone" class = "bounce_zone" onclick = "new_ball()">
+
+
+</div>
+
+</div>
+
+
+</body>    
+<script>
+var i = 0;
+function new_ball(){
+    var ballId="ball"+i;
+    window.alert(ballId);
+	document.getElementById('bounce_zone').innerHTML+="<div id='"+ ballId +"' class='ball'></div>";
+    i++;
+    eval(`${ballId} = new rememball("hello",10,0,0,${ballId}),0`)
+}
+
+class rememball{
+
+    constructor(content,speed,x,y,id,bounce) {
+        this.content = content;
+        this.speed = speed;
+        this.x = x;
+        this.y = y;
+        this.id = id;
+        this.bounce = bounce;
+        var self = this;
+        window.alert(id)
+        document.getElementById(this.id).addEventListener('click',(e)=>{
+        animate( bounce,e)
+        })
+
+        }
+
+animate(bounce,id){
+        bounce = setInterval(function(){
+             document.getElementById(this.id).style.left+=5;
+             document.getElementById(this.id).style.top+=5;
+        }, 10);
+    window.alert('bounces');}
+}
+
+
+</script>
+</body>
+</html>
