@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang ="en">
+<link href="soundboardstyles.css" type= "text/css" rel="stylesheet"/>
+<!--comment -->
+
+<style>
+    img{
+        height:90vmin;
+        margin:auto;
+    }
+</style>
+<head>
+ <title> Nerrrdddd </title>
+ </head> 
+<body>
+<hr>
+
+
+
+
+<!--this section is loading the audio sources to create the soundboard-->
+<audio id="./sounds/nerd1.mp3">
+<source src="sounds/nerd1.mp3">
+ </audio>
+
+<audio id="./sounds/nerd5.mp3">
+<source src="./sounds/nerd5.mp3">
+ </audio>
+
+ <audio id="./sounds/Nerdhomer trimmed.mp3">
+    <source src="./sounds/Nerdhomer trimmed.mp3">
+     </audio>
+
+
+     <audio id="./sounds/nerd homer 2 trimmed.mp3">
+        <source src="./sounds/nerd homer 2 trimmed.mp3">
+         </audio>
+
+ <img id = "pressme"  src="images/redcircle.png">
+ 
+
+ <script>
+
+sounds = ['./sounds/nerd1.mp3','./sounds/nerd5.mp3','./sounds/nerd homer 2 trimmed.mp3','./sounds/Nerdhomer trimmed.mp3']
+i = 0 
+sound = sounds[i]
+
+document.getElementById('pressme').addEventListener('click', function(){
+    i+=1;
+    sound = sounds[i%sounds.length];
+});
+
+document.getElementById('pressme').addEventListener('mousedown',function(){
+    document.getElementById(sound).play();
+});
+
+document.getElementById('pressme').addEventListener('mouseup',function(){
+    document.getElementById(sound).pause(); 
+    document.getElementById(sound).currentTime = 0;
+});
+
+document.getElementById('pressme').addEventListener('touchstart', function(){
+    
+    document.getElementById(sound).play();
+});
+
+document.getElementById('pressme').addEventListener('touchend',function(){
+    
+    document.getElementById(sound).pause(); 
+    document.getElementById(sound).currentTime = 0;
+    i+=1;
+    sound = sounds[i%sounds.length];
+});
+const noContext = document.getElementById('pressme');
+
+noContext.addEventListener('contextmenu', e => {
+  e.preventDefault();
+});
+
+ </script>
